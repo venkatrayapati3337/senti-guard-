@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}Fake News Detection{% endblock %}
+{% block meta_desc %}Detect fake news articles using NLP and Machine Learning — classify news as REAL or FAKE with credibility scoring{% endblock %}
+
+{% block content %}
+<section class="analysis-page" id="fakenews-page">
+    <div class="page-header">
+        <div class="page-badge">
+            <span class="badge-dot badge-dot-amber"></span>
+            NLP-Powered Detection
+        </div>
+        <h1 class="page-title">Fake News <span class="gradient-text-alt">Detector</span></h1>
+        <p class="page-subtitle">Paste a news article or headline and our NLP model will classify it as REAL or FAKE with a credibility score.</p>
+    </div>
+
+    <div class="analysis-container">
+        <!-- Input Section -->
+        <div class="input-panel" id="fakenews-input-panel">
+            <div class="panel-header">
+                <h3>📰 Enter News Text</h3>
+                <span class="char-count" id="fakenews-char-count">0 characters</span>
+            </div>
+            <textarea 
+                class="text-input" 
+                id="fakenews-text-input" 
+                placeholder="Paste a news article or headline here...&#10;&#10;Examples:&#10;• The government announced new education funding policies...&#10;• BREAKING: Scientists discover that drinking bleach cures diseases!"
+                rows="8"
+            ></textarea>
+            <div class="input-actions">
+                <button class="btn btn-primary btn-analyze btn-amber" id="btn-analyze-fakenews" disabled>
+                    <span class="btn-loader" id="fakenews-loader"></span>
+                    <span class="btn-label">Detect Fake News</span>
+                </button>
+                <button class="btn btn-ghost" id="btn-clear-fakenews">Clear</button>
+            </div>
+            
+            <!-- Sample Texts -->
+            <div class="sample-texts">
+                <p class="sample-label">Try a sample:</p>
+                <div class="sample-chips">
+                    <button class="sample-chip chip-real" data-text="The central bank maintained interest rates at their current level citing stable inflation and moderate economic growth. Analysts widely expected the decision based on recent economic indicators and labor market data.">✅ Real news</button>
+                    <button class="sample-chip chip-fake" data-text="SHOCKING: Secret underground alien base found beneath the White House! Government officials have been hiding extraterrestrial technology for decades according to leaked documents from an anonymous source.">❌ Fake news</button>
+                    <button class="sample-chip chip-real" data-text="Researchers at the university published findings showing that regular exercise can reduce the risk of heart disease by up to 30 percent. The study followed 10000 participants over a decade of observation.">📰 Health report</button>
+                    <button class="sample-chip chip-fake" data-text="URGENT: WiFi signals proven to cause immediate brain damage! Scientists warn everyone to disconnect immediately or risk permanent cognitive impairment within hours of exposure to wireless networks.">⚠️ Misinformation</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="result-panel hidden" id="fakenews-result-panel">
+            <div class="panel-header">
+                <h3>🔍 Detection Result</h3>
+                <button class="btn-close" id="btn-close-fakenews-result" aria-label="Close results">&times;</button>
+            </div>
+            
+            <div class="result-body">
+                <!-- Prediction Badge -->
+                <div class="sentiment-badge-container" id="fakenews-badge-container">
+                    <div class="sentiment-icon" id="fakenews-icon"></div>
+                    <div class="sentiment-label" id="fakenews-label"></div>
+                </div>
+
+                <!-- Credibility Meter -->
+                <div class="gauge-container" id="fakenews-gauge-container">
+                    <div class="gauge-label">Credibility Score</div>
+                    <div class="gauge-track">
+                        <div class="gauge-fill" id="fakenews-gauge-fill"></div>
+                    </div>
+                    <div class="gauge-value" id="fakenews-gauge-value">0%</div>
+                </div>
+
+                <!-- Probability Bars -->
+                <div class="prob-container" id="fakenews-prob-container">
+                    <h4>Classification Probabilities</h4>
+                    <div class="prob-bars" id="fakenews-prob-bars"></div>
+                </div>
+
+                <!-- Processed Text -->
+                <div class="processed-text-container">
+                    <h4>Processed Text (After NLP Pipeline)</h4>
+                    <div class="processed-text" id="fakenews-processed-text"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

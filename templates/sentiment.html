@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}Sentiment Analysis{% endblock %}
+{% block meta_desc %}Analyze text sentiment using ML classifiers — classify reviews and opinions as positive or negative with confidence scores{% endblock %}
+
+{% block content %}
+<section class="analysis-page" id="sentiment-page">
+    <div class="page-header">
+        <div class="page-badge">
+            <span class="badge-dot badge-dot-blue"></span>
+            Machine Learning Classifier
+        </div>
+        <h1 class="page-title">Sentiment <span class="gradient-text">Analysis</span></h1>
+        <p class="page-subtitle">Enter any text — product reviews, tweets, opinions — and our ML model will classify the sentiment as positive or negative with a confidence score.</p>
+    </div>
+
+    <div class="analysis-container">
+        <!-- Input Section -->
+        <div class="input-panel" id="sentiment-input-panel">
+            <div class="panel-header">
+                <h3>📝 Enter Text</h3>
+                <span class="char-count" id="sentiment-char-count">0 characters</span>
+            </div>
+            <textarea 
+                class="text-input" 
+                id="sentiment-text-input" 
+                placeholder="Type or paste your text here...&#10;&#10;Examples:&#10;• This product is absolutely wonderful! Best purchase ever.&#10;• Terrible quality, broke after one day. Complete waste of money.&#10;• The service was okay, nothing special but not bad either."
+                rows="8"
+            ></textarea>
+            <div class="input-actions">
+                <button class="btn btn-primary btn-analyze" id="btn-analyze-sentiment" disabled>
+                    <span class="btn-loader" id="sentiment-loader"></span>
+                    <span class="btn-label">Analyze Sentiment</span>
+                </button>
+                <button class="btn btn-ghost" id="btn-clear-sentiment">Clear</button>
+            </div>
+            
+            <!-- Sample Texts -->
+            <div class="sample-texts">
+                <p class="sample-label">Try a sample:</p>
+                <div class="sample-chips">
+                    <button class="sample-chip" data-text="This product is absolutely wonderful! I love it so much, best purchase ever. The quality exceeded all my expectations and the customer service was outstanding.">👍 Positive review</button>
+                    <button class="sample-chip" data-text="Terrible quality, broke after one day. Complete waste of money. The stitching came undone and the material feels extremely cheap. Would never recommend this to anyone.">👎 Negative review</button>
+                    <button class="sample-chip" data-text="I received so many compliments wearing this beautiful dress. The fabric is luxurious, the fit is perfect, and the color is exactly as shown in the photos. Absolutely love it!">✨ Glowing review</button>
+                    <button class="sample-chip" data-text="Worst online shopping experience ever. Product does not match listing at all. Customer support was unhelpful and the return process was a nightmare. Save your money.">🔥 Angry review</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="result-panel hidden" id="sentiment-result-panel">
+            <div class="panel-header">
+                <h3>📊 Analysis Result</h3>
+                <button class="btn-close" id="btn-close-sentiment-result" aria-label="Close results">&times;</button>
+            </div>
+            
+            <div class="result-body">
+                <!-- Sentiment Badge -->
+                <div class="sentiment-badge-container" id="sentiment-badge-container">
+                    <div class="sentiment-icon" id="sentiment-icon"></div>
+                    <div class="sentiment-label" id="sentiment-label"></div>
+                </div>
+
+                <!-- Confidence Gauge -->
+                <div class="gauge-container" id="sentiment-gauge-container">
+                    <div class="gauge-label">Confidence</div>
+                    <div class="gauge-track">
+                        <div class="gauge-fill" id="sentiment-gauge-fill"></div>
+                    </div>
+                    <div class="gauge-value" id="sentiment-gauge-value">0%</div>
+                </div>
+
+                <!-- Probability Bars -->
+                <div class="prob-container" id="sentiment-prob-container">
+                    <h4>Class Probabilities</h4>
+                    <div class="prob-bars" id="sentiment-prob-bars"></div>
+                </div>
+
+                <!-- Processed Text -->
+                <div class="processed-text-container">
+                    <h4>Processed Text (After NLP Pipeline)</h4>
+                    <div class="processed-text" id="sentiment-processed-text"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
