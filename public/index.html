@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SentiGuard AI — Home — Sentiment & Fake News Analysis</title>
+    <meta name="description" content="AI-powered text analysis platform for Sentiment Analysis and Fake News Detection using advanced Machine Learning models">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <!-- Animated background -->
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+    <div class="bg-glow bg-glow-3"></div>
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-logo" id="nav-logo">
+                <span class="logo-icon">◈</span>
+                <span class="logo-text">SentiGuard</span>
+                <span class="logo-badge">AI</span>
+            </a>
+            <div class="nav-links" id="nav-links">
+                <a href="/" class="nav-link active" id="nav-home">Home</a>
+                <a href="/sentiment.html" class="nav-link " id="nav-sentiment">Sentiment Analysis</a>
+                <a href="/fakenews.html" class="nav-link " id="nav-fakenews">Fake News Detector</a>
+                <a href="/pipeline.html" class="nav-link " id="nav-pipeline">Backend Pipeline</a>
+            </div>
+            <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        
+<!-- Hero Section -->
+<section class="hero" id="hero">
+    <div class="hero-content">
+        <div class="hero-badge">
+            <span class="badge-dot"></span>
+            AI-Powered Text Analysis
+        </div>
+        <h1 class="hero-title">
+            Understand <span class="gradient-text">Sentiments</span>,<br>
+            Detect <span class="gradient-text-alt">Fake News</span>
+        </h1>
+        <p class="hero-subtitle">
+            Harness the power of Machine Learning and Natural Language Processing to analyze text sentiment 
+            and detect misinformation with high accuracy. Built with Naive Bayes, SVM, and TF-IDF vectorization.
+        </p>
+        <div class="hero-actions">
+            <a href="/sentiment.html" class="btn btn-primary" id="cta-sentiment">
+                <span class="btn-icon">💭</span>
+                Analyze Sentiment
+            </a>
+            <a href="/fakenews.html" class="btn btn-secondary" id="cta-fakenews">
+                <span class="btn-icon">🔍</span>
+                Detect Fake News
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section" id="stats-section">
+    <div class="stats-container">
+        <div class="stat-card" id="stat-models">
+            <div class="stat-number" data-target="5">0</div>
+            <div class="stat-label">ML Models Trained</div>
+            <div class="stat-detail">LR, NB, SVM, DT, RF</div>
+        </div>
+        <div class="stat-card" id="stat-accuracy">
+            <div class="stat-number" data-target="95" data-suffix="%">0%</div>
+            <div class="stat-label">Classification Accuracy</div>
+            <div class="stat-detail">F1-Score Weighted</div>
+        </div>
+        <div class="stat-card" id="stat-features">
+            <div class="stat-number" data-target="5000" data-suffix="+">0+</div>
+            <div class="stat-label">TF-IDF Features</div>
+            <div class="stat-detail">Unigram + Bigram</div>
+        </div>
+        <div class="stat-card" id="stat-nlp">
+            <div class="stat-number" data-target="4">0</div>
+            <div class="stat-label">NLP Pipeline Steps</div>
+            <div class="stat-detail">Clean → Token → Stop → Lemma</div>
+        </div>
+    </div>
+</section>
+
+<!-- Feature Cards -->
+<section class="features-section" id="features-section">
+    <div class="section-header">
+        <h2 class="section-title">Powerful Analysis <span class="gradient-text">Tools</span></h2>
+        <p class="section-subtitle">Two comprehensive ML-powered analysis modules built with proven algorithms</p>
+    </div>
+    
+    <div class="features-grid">
+        <!-- Sentiment Analysis Card -->
+        <div class="feature-card feature-sentiment" id="feature-sentiment">
+            <div class="feature-icon-wrap">
+                <div class="feature-icon">💬</div>
+            </div>
+            <h3 class="feature-title">Sentiment Analysis</h3>
+            <p class="feature-desc">
+                Classify text as <strong>positive</strong> or <strong>negative</strong> using trained ML classifiers. 
+                Powered by TF-IDF vectorization and evaluated across 5 different algorithms to find the optimal model.
+            </p>
+            <ul class="feature-list">
+                <li>Logistic Regression & Naive Bayes</li>
+                <li>Support Vector Machine (SVM)</li>
+                <li>Decision Tree & Random Forest</li>
+                <li>Confidence score visualization</li>
+                <li>Real-time text preprocessing</li>
+            </ul>
+            <a href="/sentiment.html" class="feature-cta" id="feature-cta-sentiment">
+                Try Sentiment Analysis
+                <span class="cta-arrow">→</span>
+            </a>
+        </div>
+
+        <!-- Fake News Detection Card -->
+        <div class="feature-card feature-fakenews" id="feature-fakenews">
+            <div class="feature-icon-wrap">
+                <div class="feature-icon">📰</div>
+            </div>
+            <h3 class="feature-title">Fake News Detection</h3>
+            <p class="feature-desc">
+                Determine if a news article is <strong>REAL</strong> or <strong>FAKE</strong> using NLP-powered classification. 
+                Trained on labeled news datasets with stance detection and TF-IDF feature extraction.
+            </p>
+            <ul class="feature-list">
+                <li>Naive Bayes classification</li>
+                <li>TF-IDF feature extraction</li>
+                <li>Stance detection approach</li>
+                <li>Credibility score meter</li>
+                <li>Article text analysis</li>
+            </ul>
+            <a href="/fakenews.html" class="feature-cta" id="feature-cta-fakenews">
+                Try Fake News Detector
+                <span class="cta-arrow">→</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Pipeline Section -->
+<section class="pipeline-section" id="pipeline-section">
+    <div class="section-header">
+        <h2 class="section-title">How It <span class="gradient-text-alt">Works</span></h2>
+        <p class="section-subtitle">Our NLP pipeline processes text through multiple stages for accurate classification</p>
+    </div>
+    
+    <div class="pipeline-steps">
+        <div class="pipeline-step" id="step-input">
+            <div class="step-number">01</div>
+            <div class="step-content">
+                <h4>Text Input</h4>
+                <p>Enter your review, article, or any text you want to analyze</p>
+            </div>
+        </div>
+        <div class="pipeline-connector"></div>
+        <div class="pipeline-step" id="step-clean">
+            <div class="step-number">02</div>
+            <div class="step-content">
+                <h4>Text Cleaning</h4>
+                <p>Remove special characters, convert to lowercase, normalize text</p>
+            </div>
+        </div>
+        <div class="pipeline-connector"></div>
+        <div class="pipeline-step" id="step-nlp">
+            <div class="step-number">03</div>
+            <div class="step-content">
+                <h4>NLP Processing</h4>
+                <p>Tokenization, stopword removal, and lemmatization using NLTK</p>
+            </div>
+        </div>
+        <div class="pipeline-connector"></div>
+        <div class="pipeline-step" id="step-tfidf">
+            <div class="step-number">04</div>
+            <div class="step-content">
+                <h4>TF-IDF Vectorization</h4>
+                <p>Convert text into numerical feature vectors with unigram and bigram features</p>
+            </div>
+        </div>
+        <div class="pipeline-connector"></div>
+        <div class="pipeline-step" id="step-predict">
+            <div class="step-number">05</div>
+            <div class="step-content">
+                <h4>ML Prediction</h4>
+                <p>Classify text using the best-performing trained model with confidence scores</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-logo">
+                        <span class="logo-icon">◈</span>
+                        <span class="logo-text">SentiGuard AI</span>
+                    </div>
+                    <p class="footer-desc">Powered by Machine Learning & Natural Language Processing. Built with Python, scikit-learn, and NLTK.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Analysis Tools</h4>
+                    <a href="/sentiment.html">Sentiment Analysis</a>
+                    <a href="/fakenews.html">Fake News Detection</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Technology</h4>
+                    <span>Naive Bayes</span>
+                    <span>SVM & Logistic Regression</span>
+                    <span>TF-IDF Vectorization</span>
+                    <span>NLTK Pipeline</span>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 SentiGuard AI — Sentiment Analysis & Fake News Detection Project</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/app.js"></script>
+    
+</body>
+</html>

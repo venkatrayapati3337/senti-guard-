@@ -36,16 +36,16 @@ def load_models():
     try:
         sentiment_model = joblib.load(os.path.join(MODELS_DIR, 'sentiment_model.pkl'))
         sentiment_tfidf = joblib.load(os.path.join(MODELS_DIR, 'tfidf_sentiment.pkl'))
-        print("  ✓ Sentiment model loaded")
+        print("  [OK] Sentiment model loaded")
     except FileNotFoundError:
-        print("  ✗ Sentiment model not found — run models/train_sentiment.py first")
+        print("  [!!] Sentiment model not found -- run models/train_sentiment.py first")
     
     try:
         fakenews_model = joblib.load(os.path.join(MODELS_DIR, 'fakenews_model.pkl'))
         fakenews_tfidf = joblib.load(os.path.join(MODELS_DIR, 'tfidf_fakenews.pkl'))
-        print("  ✓ Fake news model loaded")
+        print("  [OK] Fake news model loaded")
     except FileNotFoundError:
-        print("  ✗ Fake news model not found — run models/train_fakenews.py first")
+        print("  [!!] Fake news model not found -- run models/train_fakenews.py first")
 
 
 # ── Text Preprocessing ──────────────────────────────────────
@@ -72,6 +72,10 @@ def sentiment_page():
 @app.route('/fakenews')
 def fakenews_page():
     return render_template('fakenews.html')
+
+@app.route('/pipeline')
+def pipeline_page():
+    return render_template('pipeline.html')
 
 
 # ── API Endpoints ────────────────────────────────────────────

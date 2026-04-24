@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentiment Analysis — Sentiment & Fake News Analysis</title>
+    <meta name="description" content="Analyze text sentiment using ML classifiers — classify reviews and opinions as positive or negative with confidence scores">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <!-- Animated background -->
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+    <div class="bg-glow bg-glow-3"></div>
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-logo" id="nav-logo">
+                <span class="logo-icon">◈</span>
+                <span class="logo-text">SentiGuard</span>
+                <span class="logo-badge">AI</span>
+            </a>
+            <div class="nav-links" id="nav-links">
+                <a href="/" class="nav-link " id="nav-home">Home</a>
+                <a href="/sentiment.html" class="nav-link " id="nav-sentiment">Sentiment Analysis</a>
+                <a href="/fakenews.html" class="nav-link " id="nav-fakenews">Fake News Detector</a>
+                <a href="/pipeline.html" class="nav-link " id="nav-pipeline">Backend Pipeline</a>
+            </div>
+            <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        
+<section class="analysis-page" id="sentiment-page">
+    <div class="page-header">
+        <div class="page-badge">
+            <span class="badge-dot badge-dot-blue"></span>
+            Machine Learning Classifier
+        </div>
+        <h1 class="page-title">Sentiment <span class="gradient-text">Analysis</span></h1>
+        <p class="page-subtitle">Enter any text — product reviews, tweets, opinions — and our ML model will classify the sentiment as positive or negative with a confidence score.</p>
+    </div>
+
+    <div class="analysis-container">
+        <!-- Input Section -->
+        <div class="input-panel" id="sentiment-input-panel">
+            <div class="panel-header">
+                <h3>📝 Enter Text</h3>
+                <span class="char-count" id="sentiment-char-count">0 characters</span>
+            </div>
+            <textarea 
+                class="text-input" 
+                id="sentiment-text-input" 
+                placeholder="Type or paste your text here...&#10;&#10;Examples:&#10;• This product is absolutely wonderful! Best purchase ever.&#10;• Terrible quality, broke after one day. Complete waste of money.&#10;• The service was okay, nothing special but not bad either."
+                rows="8"
+            ></textarea>
+            <div class="input-actions">
+                <button class="btn btn-primary btn-analyze" id="btn-analyze-sentiment" disabled>
+                    <span class="btn-loader" id="sentiment-loader"></span>
+                    <span class="btn-label">Analyze Sentiment</span>
+                </button>
+                <button class="btn btn-ghost" id="btn-clear-sentiment">Clear</button>
+            </div>
+            
+            <!-- Sample Texts -->
+            <div class="sample-texts">
+                <p class="sample-label">Try a sample:</p>
+                <div class="sample-chips">
+                    <button class="sample-chip" data-text="This product is absolutely wonderful! I love it so much, best purchase ever. The quality exceeded all my expectations and the customer service was outstanding.">👍 Positive review</button>
+                    <button class="sample-chip" data-text="Terrible quality, broke after one day. Complete waste of money. The stitching came undone and the material feels extremely cheap. Would never recommend this to anyone.">👎 Negative review</button>
+                    <button class="sample-chip" data-text="I received so many compliments wearing this beautiful dress. The fabric is luxurious, the fit is perfect, and the color is exactly as shown in the photos. Absolutely love it!">✨ Glowing review</button>
+                    <button class="sample-chip" data-text="Worst online shopping experience ever. Product does not match listing at all. Customer support was unhelpful and the return process was a nightmare. Save your money.">🔥 Angry review</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="result-panel hidden" id="sentiment-result-panel">
+            <div class="panel-header">
+                <h3>📊 Analysis Result</h3>
+                <button class="btn-close" id="btn-close-sentiment-result" aria-label="Close results">&times;</button>
+            </div>
+            
+            <div class="result-body">
+                <!-- Sentiment Badge -->
+                <div class="sentiment-badge-container" id="sentiment-badge-container">
+                    <div class="sentiment-icon" id="sentiment-icon"></div>
+                    <div class="sentiment-label" id="sentiment-label"></div>
+                </div>
+
+                <!-- Confidence Gauge -->
+                <div class="gauge-container" id="sentiment-gauge-container">
+                    <div class="gauge-label">Confidence</div>
+                    <div class="gauge-track">
+                        <div class="gauge-fill" id="sentiment-gauge-fill"></div>
+                    </div>
+                    <div class="gauge-value" id="sentiment-gauge-value">0%</div>
+                </div>
+
+                <!-- Probability Bars -->
+                <div class="prob-container" id="sentiment-prob-container">
+                    <h4>Class Probabilities</h4>
+                    <div class="prob-bars" id="sentiment-prob-bars"></div>
+                </div>
+
+                <!-- Processed Text -->
+                <div class="processed-text-container">
+                    <h4>Processed Text (After NLP Pipeline)</h4>
+                    <div class="processed-text" id="sentiment-processed-text"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-logo">
+                        <span class="logo-icon">◈</span>
+                        <span class="logo-text">SentiGuard AI</span>
+                    </div>
+                    <p class="footer-desc">Powered by Machine Learning & Natural Language Processing. Built with Python, scikit-learn, and NLTK.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Analysis Tools</h4>
+                    <a href="/sentiment.html">Sentiment Analysis</a>
+                    <a href="/fakenews.html">Fake News Detection</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Technology</h4>
+                    <span>Naive Bayes</span>
+                    <span>SVM & Logistic Regression</span>
+                    <span>TF-IDF Vectorization</span>
+                    <span>NLTK Pipeline</span>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 SentiGuard AI — Sentiment Analysis & Fake News Detection Project</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/app.js"></script>
+    
+</body>
+</html>

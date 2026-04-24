@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
@@ -30,6 +31,7 @@
                 <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}" id="nav-home">Home</a>
                 <a href="/sentiment" class="nav-link {% if request.path == '/sentiment' %}active{% endif %}" id="nav-sentiment">Sentiment Analysis</a>
                 <a href="/fakenews" class="nav-link {% if request.path == '/fakenews' %}active{% endif %}" id="nav-fakenews">Fake News Detector</a>
+                <a href="/pipeline" class="nav-link {% if request.path == '/pipeline' %}active{% endif %}" id="nav-pipeline">Backend Pipeline</a>
             </div>
             <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
                 <span></span><span></span><span></span>

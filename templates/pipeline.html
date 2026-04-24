@@ -1,0 +1,530 @@
+{% extends 'base.html' %}
+{% block title %}Backend Pipeline{% endblock %}
+{% block meta_desc %}Explore the complete backend architecture of SentiGuard AI — from raw text input through NLP preprocessing, TF-IDF vectorization, to ML classification and API response{% endblock %}
+
+{% block content %}
+<section class="analysis-page pipeline-page" id="pipeline-page">
+    <div class="page-header">
+        <div class="page-badge">
+            <span class="badge-dot badge-dot-amber"></span>
+            System Architecture
+        </div>
+        <h1 class="page-title">Backend <span class="gradient-text-alt">Pipeline</span></h1>
+        <p class="page-subtitle">
+            An interactive breakdown of every stage your text passes through — from the moment you hit 
+            <em>"Analyze"</em> to the instant you receive your result.
+        </p>
+    </div>
+
+    <!-- ── Architecture Overview Diagram ──────────────── -->
+    <div class="arch-diagram" id="arch-diagram">
+        <div class="arch-title-row">
+            <h2 class="section-title" style="font-size:1.5rem;">System <span class="gradient-text">Overview</span></h2>
+        </div>
+        <div class="arch-flow">
+            <div class="arch-node arch-node-user" id="arch-user">
+                <div class="arch-node-icon">🧑‍💻</div>
+                <div class="arch-node-label">User / Browser</div>
+                <div class="arch-node-sub">HTML + JS Frontend</div>
+            </div>
+            <div class="arch-arrow"><span></span></div>
+            <div class="arch-node arch-node-api" id="arch-api">
+                <div class="arch-node-icon">⚡</div>
+                <div class="arch-node-label">Flask API</div>
+                <div class="arch-node-sub">REST Endpoints</div>
+            </div>
+            <div class="arch-arrow"><span></span></div>
+            <div class="arch-node arch-node-nlp" id="arch-nlp">
+                <div class="arch-node-icon">🧠</div>
+                <div class="arch-node-label">NLP Engine</div>
+                <div class="arch-node-sub">NLTK Pipeline</div>
+            </div>
+            <div class="arch-arrow"><span></span></div>
+            <div class="arch-node arch-node-ml" id="arch-ml">
+                <div class="arch-node-icon">🎯</div>
+                <div class="arch-node-label">ML Models</div>
+                <div class="arch-node-sub">scikit-learn</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Interactive Pipeline ───────────────────────── -->
+    <div class="pipe-section" id="pipe-section">
+        <div class="section-header" style="margin-bottom:36px;">
+            <h2 class="section-title">Request <span class="gradient-text-alt">Lifecycle</span></h2>
+            <p class="section-subtitle">Click any stage to see the technical details</p>
+        </div>
+
+        <!-- Stage 1 — HTTP Request -->
+        <div class="pipe-stage" id="stage-1" data-stage="1">
+            <div class="pipe-stage-header">
+                <div class="pipe-num">01</div>
+                <div class="pipe-stage-title">
+                    <h3>HTTP POST Request</h3>
+                    <span class="pipe-tag pipe-tag-blue">Frontend → Backend</span>
+                </div>
+                <div class="pipe-toggle">+</div>
+            </div>
+            <div class="pipe-stage-body">
+                <div class="pipe-cols">
+                    <div class="pipe-col-info">
+                        <p>When you click <strong>"Analyze"</strong>, the browser fires a <code>fetch()</code> call to the Flask backend. The text you entered is serialized as JSON and sent via an asynchronous POST request.</p>
+                        <ul class="pipe-detail-list">
+                            <li><strong>Endpoint (Sentiment):</strong> <code>/api/analyze-sentiment</code></li>
+                            <li><strong>Endpoint (Fake News):</strong> <code>/api/detect-fakenews</code></li>
+                            <li><strong>Method:</strong> POST</li>
+                            <li><strong>Content-Type:</strong> <code>application/json</code></li>
+                            <li><strong>Payload:</strong> <code>{ "text": "your input..." }</code></li>
+                        </ul>
+                    </div>
+                    <div class="pipe-col-code">
+                        <div class="code-block-title">app.js — fetch call</div>
+                        <pre class="pipe-code"><code>const res = await fetch('/api/analyze-sentiment', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ text })
+});
+const data = await res.json();</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pipe-connector"><div class="pipe-connector-line"></div></div>
+
+        <!-- Stage 2 — Route Handling -->
+        <div class="pipe-stage" id="stage-2" data-stage="2">
+            <div class="pipe-stage-header">
+                <div class="pipe-num">02</div>
+                <div class="pipe-stage-title">
+                    <h3>Flask Route Handler</h3>
+                    <span class="pipe-tag pipe-tag-purple">app.py — API Layer</span>
+                </div>
+                <div class="pipe-toggle">+</div>
+            </div>
+            <div class="pipe-stage-body">
+                <div class="pipe-cols">
+                    <div class="pipe-col-info">
+                        <p>Flask receives the request and routes it to the decorated function. The handler extracts the JSON body, validates the input, and delegates to the ML pipeline.</p>
+                        <ul class="pipe-detail-list">
+                            <li><strong>Framework:</strong> Flask 3.1.1</li>
+                            <li><strong>Validation:</strong> Checks for empty text, model availability</li>
+                            <li><strong>Error Handling:</strong> Returns 400 (bad input) or 503 (model not loaded)</li>
+                            <li><strong>WSGI Server:</strong> Gunicorn (production) / Werkzeug (dev)</li>
+                        </ul>
+                    </div>
+                    <div class="pipe-col-code">
+                        <div class="code-block-title">app.py — route handler</div>
+                        <pre class="pipe-code"><code>@app.route('/api/analyze-sentiment', methods=['POST'])
+def analyze_sentiment():
+    data = request.get_json()
+    text = data.get('text', '').strip()
+
+    if not text:
+        return jsonify({'error': 'No text provided'}), 400
+
+    # → proceeds to NLP pipeline...</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pipe-connector"><div class="pipe-connector-line"></div></div>
+
+        <!-- Stage 3 — Text Cleaning -->
+        <div class="pipe-stage" id="stage-3" data-stage="3">
+            <div class="pipe-stage-header">
+                <div class="pipe-num">03</div>
+                <div class="pipe-stage-title">
+                    <h3>Text Cleaning &amp; Normalization</h3>
+                    <span class="pipe-tag pipe-tag-green">NLP — Step 1</span>
+                </div>
+                <div class="pipe-toggle">+</div>
+            </div>
+            <div class="pipe-stage-body">
+                <div class="pipe-cols">
+                    <div class="pipe-col-info">
+                        <p>The raw text is cleaned to remove noise that would confuse the ML model. All text is lowercased and non-alphabetic characters (numbers, punctuation, special symbols) are stripped.</p>
+                        <div class="pipe-transform-demo">
+                            <div class="transform-before">
+                                <span class="transform-label">Input</span>
+                                <div class="transform-text">"This product is AMAZING!!! 5/5 stars ⭐"</div>
+                            </div>
+                            <div class="transform-arrow">→</div>
+                            <div class="transform-after">
+                                <span class="transform-label">Output</span>
+                                <div class="transform-text">"this product is amazing   stars"</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pipe-col-code">
+                        <div class="code-block-title">preprocess_text() — cleaning</div>
+                        <pre class="pipe-code"><code>def preprocess_text(text):
+    text = str(text).lower()
+    text = re.sub(r'[^a-zA-Z\s]', '', text)
+    # Result: only lowercase letters + spaces</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pipe-connector"><div class="pipe-connector-line"></div></div>
+
+        <!-- Stage 4 — Stopword Removal -->
+        <div class="pipe-stage" id="stage-4" data-stage="4">
+            <div class="pipe-stage-header">
+                <div class="pipe-num">04</div>
+                <div class="pipe-stage-title">
+                    <h3>Tokenization &amp; Stopword Removal</h3>
+                    <span class="pipe-tag pipe-tag-green">NLP — Step 2</span>
+                </div>
+                <div class="pipe-toggle">+</div>
+            </div>
+            <div class="pipe-stage-body">
+                <div class="pipe-cols">
+                    <div class="pipe-col-info">
+                        <p>Text is split into individual tokens (words). Common English words that carry no sentiment meaning — like <em>"is", "the", "a", "this"</em> — are removed using NLTK's stopword list (179 words).</p>
+                        <div class="pipe-transform-demo">
+                            <div class="transform-before">
+                                <span class="transform-label">Tokens</span>
+                                <div class="transform-text">["this", "product", "is", "amazing", "stars"]</div>
+                            </div>
+                            <div class="transform-arrow">→</div>
+                            <div class="transform-after">
+                                <span class="transform-label">Filtered</span>
+                                <div class="transform-text">["product", "amazing", "stars"]</div>
+                            </div>
+                        </div>
+                        <ul class="pipe-detail-list" style="margin-top:16px;">
+                            <li><strong>Library:</strong> <code>nltk.corpus.stopwords</code></li>
+                            <li><strong>Language:</strong> English (179 stop words)</li>
+                            <li><strong>Purpose:</strong> Reduce noise, focus on meaningful words</li>
+                        </ul>
+                    </div>
+                    <div class="pipe-col-code">
+                        <div class="code-block-title">preprocess_text() — tokenize &amp; filter</div>
+                        <pre class="pipe-code"><code>tokens = text.split()
+stop_words = set(stopwords.words('english'))
+tokens = [word for word in tokens
+          if word not in stop_words]
+# Removes: "this", "is", etc.</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pipe-connector"><div class="pipe-connector-line"></div></div>
+
+        <!-- Stage 5 — Lemmatization -->
+        <div class="pipe-stage" id="stage-5" data-stage="5">
+            <div class="pipe-stage-header">
+                <div class="pipe-num">05</div>
+                <div class="pipe-stage-title">
+                    <h3>Lemmatization</h3>
+                    <span class="pipe-tag pipe-tag-green">NLP — Step 3</span>
+                </div>
+                <div class="pipe-toggle">+</div>
+            </div>
+            <div class="pipe-stage-body">
+                <div class="pipe-cols">
+                    <div class="pipe-col-info">
+                        <p>Each remaining token is reduced to its dictionary root form (lemma) using NLTK's WordNet Lemmatizer. This normalizes word variations so the model treats <em>"running"</em>, <em>"ran"</em>, and <em>"runs"</em> as the same concept.</p>
+                        <div class="pipe-transform-demo">
+                            <div class="transform-before">
+                                <span class="transform-label">Tokens</span>
+                                <div class="transform-text">["products", "amazing", "stars"]</div>
+                            </div>
+                            <div class="transform-arrow">→</div>
+                            <div class="transform-after">
+                                <span class="transform-label">Lemmatized</span>
+                                <div class="transform-text">["product", "amazing", "star"]</div>
+                            </div>
+                        </div>
+                        <ul class="pipe-detail-list" style="margin-top:16px;">
+                            <li><strong>Library:</strong> <code>nltk.stem.WordNetLemmatizer</code></li>
+                            <li><strong>Difference from Stemming:</strong> Produces valid dictionary words</li>
+                        </ul>
+                    </div>
+                    <div class="pipe-col-code">
+                        <div class="code-block-title">preprocess_text() — lemmatize</div>
+                        <pre class="pipe-code"><code>lemmatizer = WordNetLemmatizer()
+tokens = [lemmatizer.lemmatize(word)
+          for word in tokens
+          if word not in stop_words]
+return ' '.join(tokens)
+# Final: "product amazing star"</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pipe-connector"><div class="pipe-connector-line"></div></div>
+
+        <!-- Stage 6 — TF-IDF -->
+        <div class="pipe-stage" id="stage-6" data-stage="6">
+            <div class="pipe-stage-header">
+                <div class="pipe-num">06</div>
+                <div class="pipe-stage-title">
+                    <h3>TF-IDF Vectorization</h3>
+                    <span class="pipe-tag pipe-tag-amber">Feature Engineering</span>
+                </div>
+                <div class="pipe-toggle">+</div>
+            </div>
+            <div class="pipe-stage-body">
+                <div class="pipe-cols">
+                    <div class="pipe-col-info">
+                        <p>The cleaned text is converted into a <strong>numerical feature vector</strong> using the pre-fitted TF-IDF vectorizer. Each dimension represents a word (unigram) or word pair (bigram) weighted by how important it is across all training documents.</p>
+                        <div class="pipe-transform-demo">
+                            <div class="transform-before">
+                                <span class="transform-label">Clean Text</span>
+                                <div class="transform-text">"product amazing star"</div>
+                            </div>
+                            <div class="transform-arrow">→</div>
+                            <div class="transform-after">
+                                <span class="transform-label">Sparse Vector</span>
+                                <div class="transform-text">[0, 0, 0.42, ..., 0.71, 0, 0.58]<br><small style="color:var(--text-dim);">(5000 dimensions)</small></div>
+                            </div>
+                        </div>
+                        <ul class="pipe-detail-list" style="margin-top:16px;">
+                            <li><strong>Max Features:</strong> 5,000</li>
+                            <li><strong>N-gram Range:</strong> (1, 2) — unigrams + bigrams</li>
+                            <li><strong>TF:</strong> Term Frequency — how often a word appears in this text</li>
+                            <li><strong>IDF:</strong> Inverse Document Frequency — rarity across all docs</li>
+                            <li><strong>Library:</strong> <code>sklearn.feature_extraction.text.TfidfVectorizer</code></li>
+                        </ul>
+                    </div>
+                    <div class="pipe-col-code">
+                        <div class="code-block-title">app.py — vectorize at prediction time</div>
+                        <pre class="pipe-code"><code># Pre-fitted vectorizer loaded from .pkl
+# tfidf_sentiment.pkl or tfidf_fakenews.pkl
+
+clean = preprocess_text(text)
+features = sentiment_tfidf.transform([clean])
+# features.shape → (1, 5000)
+# Sparse matrix, most values = 0</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pipe-connector"><div class="pipe-connector-line"></div></div>
+
+        <!-- Stage 7 — ML Prediction -->
+        <div class="pipe-stage" id="stage-7" data-stage="7">
+            <div class="pipe-stage-header">
+                <div class="pipe-num">07</div>
+                <div class="pipe-stage-title">
+                    <h3>ML Model Prediction</h3>
+                    <span class="pipe-tag pipe-tag-red">Classification</span>
+                </div>
+                <div class="pipe-toggle">+</div>
+            </div>
+            <div class="pipe-stage-body">
+                <div class="pipe-cols">
+                    <div class="pipe-col-info">
+                        <p>The feature vector is fed to the trained classifier, which outputs a <strong>class label</strong> and <strong>confidence score</strong>. During training, 5 algorithms compete and the best-performing model is saved.</p>
+                        <div class="pipe-models-grid">
+                            <div class="pipe-model-card">
+                                <div class="pipe-model-name">Logistic Regression</div>
+                                <div class="pipe-model-desc">Linear classifier with sigmoid boundary</div>
+                            </div>
+                            <div class="pipe-model-card">
+                                <div class="pipe-model-name">Naive Bayes</div>
+                                <div class="pipe-model-desc">Probabilistic classifier using Bayes' theorem</div>
+                            </div>
+                            <div class="pipe-model-card pipe-model-highlight">
+                                <div class="pipe-model-name">SVM (Linear)</div>
+                                <div class="pipe-model-desc">Maximum-margin hyperplane classifier</div>
+                                <span class="pipe-model-badge">Best Performer</span>
+                            </div>
+                            <div class="pipe-model-card">
+                                <div class="pipe-model-name">Decision Tree</div>
+                                <div class="pipe-model-desc">Rule-based tree splitting</div>
+                            </div>
+                            <div class="pipe-model-card">
+                                <div class="pipe-model-name">Random Forest</div>
+                                <div class="pipe-model-desc">Ensemble of decision trees</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pipe-col-code">
+                        <div class="code-block-title">app.py — predict &amp; score</div>
+                        <pre class="pipe-code"><code>prediction = sentiment_model.predict(features)[0]
+# → "positive" or "negative"
+
+if hasattr(model, 'predict_proba'):
+    probabilities = model.predict_proba(features)[0]
+    confidence = float(max(probabilities)) * 100
+elif hasattr(model, 'decision_function'):
+    decision = model.decision_function(features)[0]
+    confidence = min(abs(decision) * 20, 99.0)</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pipe-connector"><div class="pipe-connector-line"></div></div>
+
+        <!-- Stage 8 — JSON Response -->
+        <div class="pipe-stage" id="stage-8" data-stage="8">
+            <div class="pipe-stage-header">
+                <div class="pipe-num">08</div>
+                <div class="pipe-stage-title">
+                    <h3>JSON API Response</h3>
+                    <span class="pipe-tag pipe-tag-blue">Backend → Frontend</span>
+                </div>
+                <div class="pipe-toggle">+</div>
+            </div>
+            <div class="pipe-stage-body">
+                <div class="pipe-cols">
+                    <div class="pipe-col-info">
+                        <p>Flask serializes the prediction, confidence score, probability distribution, and the processed text into a JSON response. The frontend then renders this data with animated gauges and visual badges.</p>
+                        <ul class="pipe-detail-list">
+                            <li><strong>Status:</strong> 200 OK</li>
+                            <li><strong>Content-Type:</strong> <code>application/json</code></li>
+                            <li><strong>Latency:</strong> ~50–150 ms (including NLP + inference)</li>
+                        </ul>
+                    </div>
+                    <div class="pipe-col-code">
+                        <div class="code-block-title">Response payload</div>
+                        <pre class="pipe-code"><code>return jsonify({
+    "sentiment": "positive",
+    "confidence": 92.47,
+    "probabilities": {
+        "positive": 92.47,
+        "negative": 7.53
+    },
+    "processed_text": "product amazing star"
+})</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Training Pipeline ─────────────────────────── -->
+    <div class="train-section" id="train-section">
+        <div class="section-header">
+            <h2 class="section-title">Model <span class="gradient-text">Training</span></h2>
+            <p class="section-subtitle">How the ML models were trained offline before deployment</p>
+        </div>
+
+        <div class="train-flow">
+            <div class="train-step" id="train-step-1">
+                <div class="train-step-num">T1</div>
+                <div class="train-step-content">
+                    <h4>Load Dataset</h4>
+                    <p>CSV files from <code>/data/</code> — product reviews (sentiment) and labeled news articles (fake news)</p>
+                </div>
+            </div>
+            <div class="train-connector"></div>
+            <div class="train-step" id="train-step-2">
+                <div class="train-step-num">T2</div>
+                <div class="train-step-content">
+                    <h4>Preprocess All Rows</h4>
+                    <p>Apply the same NLP pipeline (clean → tokenize → stopwords → lemmatize) to every training sample</p>
+                </div>
+            </div>
+            <div class="train-connector"></div>
+            <div class="train-step" id="train-step-3">
+                <div class="train-step-num">T3</div>
+                <div class="train-step-content">
+                    <h4>Fit TF-IDF Vectorizer</h4>
+                    <p>Learn vocabulary and IDF weights from training data, produce 5000-dim sparse feature matrix</p>
+                </div>
+            </div>
+            <div class="train-connector"></div>
+            <div class="train-step" id="train-step-4">
+                <div class="train-step-num">T4</div>
+                <div class="train-step-content">
+                    <h4>Train &amp; Evaluate Models</h4>
+                    <p>80/20 train-test split. Train LR, NB, SVM, DT, RF. Compare F1-weighted scores. Pick the best.</p>
+                </div>
+            </div>
+            <div class="train-connector"></div>
+            <div class="train-step" id="train-step-5">
+                <div class="train-step-num">T5</div>
+                <div class="train-step-content">
+                    <h4>Serialize with Joblib</h4>
+                    <p>Save best model + fitted TF-IDF vectorizer as <code>.pkl</code> files to <code>/models/</code></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ── Model Accuracy Charts ─────────────────────── -->
+    <div class="chart-section" id="chart-section">
+        <div class="section-header">
+            <h2 class="section-title">Model <span class="gradient-text">Accuracy</span></h2>
+            <p class="section-subtitle">Comparison of all trained classifiers — real evaluation metrics from 80/20 test splits</p>
+        </div>
+
+        <!-- Dataset Tabs -->
+        <div class="chart-tabs" id="chart-tabs">
+            <button class="chart-tab active" data-dataset="sentiment" id="tab-sentiment">
+                <span class="chart-tab-icon">💬</span> Sentiment Analysis
+            </button>
+            <button class="chart-tab" data-dataset="fakenews" id="tab-fakenews">
+                <span class="chart-tab-icon">📰</span> Fake News Detection
+            </button>
+        </div>
+
+        <!-- Chart Container -->
+        <div class="chart-container" id="chart-container">
+            <div class="chart-canvas-wrap">
+                <canvas id="accuracy-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Metrics Table -->
+        <div class="metrics-table-wrap" id="metrics-table-wrap">
+            <table class="metrics-table" id="metrics-table">
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>Accuracy</th>
+                        <th>F1-Score</th>
+                        <th>Precision</th>
+                        <th>Recall</th>
+                    </tr>
+                </thead>
+                <tbody id="metrics-tbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ── Tech Stack Cards ──────────────────────────── -->
+    <div class="tech-section" id="tech-section">
+        <div class="section-header">
+            <h2 class="section-title">Tech <span class="gradient-text-alt">Stack</span></h2>
+            <p class="section-subtitle">The technologies that power every request</p>
+        </div>
+        <div class="tech-grid">
+            <div class="tech-card" id="tech-flask">
+                <div class="tech-icon">🌶️</div>
+                <h4>Flask</h4>
+                <p>Lightweight WSGI framework serving HTML templates and RESTful JSON APIs</p>
+            </div>
+            <div class="tech-card" id="tech-sklearn">
+                <div class="tech-icon">🔬</div>
+                <h4>scikit-learn</h4>
+                <p>ML library providing classifiers, TF-IDF vectorization, and evaluation metrics</p>
+            </div>
+            <div class="tech-card" id="tech-nltk">
+                <div class="tech-icon">📚</div>
+                <h4>NLTK</h4>
+                <p>Natural Language Toolkit for stopwords, lemmatization, and tokenization</p>
+            </div>
+            <div class="tech-card" id="tech-joblib">
+                <div class="tech-icon">💾</div>
+                <h4>Joblib</h4>
+                <p>Efficient serialization of trained models and vectorizers to .pkl files</p>
+            </div>
+            <div class="tech-card" id="tech-numpy">
+                <div class="tech-icon">🔢</div>
+                <h4>NumPy + Pandas</h4>
+                <p>Data manipulation, numerical computation, and CSV dataset handling</p>
+            </div>
+            <div class="tech-card" id="tech-js">
+                <div class="tech-icon">✨</div>
+                <h4>Vanilla JS</h4>
+                <p>Async fetch API, DOM manipulation, particle canvas, and animated UI</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

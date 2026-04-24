@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake News Detection — Sentiment & Fake News Analysis</title>
+    <meta name="description" content="Detect fake news articles using NLP and Machine Learning — classify news as REAL or FAKE with credibility scoring">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <!-- Animated background -->
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+    <div class="bg-glow bg-glow-3"></div>
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-logo" id="nav-logo">
+                <span class="logo-icon">◈</span>
+                <span class="logo-text">SentiGuard</span>
+                <span class="logo-badge">AI</span>
+            </a>
+            <div class="nav-links" id="nav-links">
+                <a href="/" class="nav-link " id="nav-home">Home</a>
+                <a href="/sentiment.html" class="nav-link " id="nav-sentiment">Sentiment Analysis</a>
+                <a href="/fakenews.html" class="nav-link " id="nav-fakenews">Fake News Detector</a>
+                <a href="/pipeline.html" class="nav-link " id="nav-pipeline">Backend Pipeline</a>
+            </div>
+            <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        
+<section class="analysis-page" id="fakenews-page">
+    <div class="page-header">
+        <div class="page-badge">
+            <span class="badge-dot badge-dot-amber"></span>
+            NLP-Powered Detection
+        </div>
+        <h1 class="page-title">Fake News <span class="gradient-text-alt">Detector</span></h1>
+        <p class="page-subtitle">Paste a news article or headline and our NLP model will classify it as REAL or FAKE with a credibility score.</p>
+    </div>
+
+    <div class="analysis-container">
+        <!-- Input Section -->
+        <div class="input-panel" id="fakenews-input-panel">
+            <div class="panel-header">
+                <h3>📰 Enter News Text</h3>
+                <span class="char-count" id="fakenews-char-count">0 characters</span>
+            </div>
+            <textarea 
+                class="text-input" 
+                id="fakenews-text-input" 
+                placeholder="Paste a news article or headline here...&#10;&#10;Examples:&#10;• The government announced new education funding policies...&#10;• BREAKING: Scientists discover that drinking bleach cures diseases!"
+                rows="8"
+            ></textarea>
+            <div class="input-actions">
+                <button class="btn btn-primary btn-analyze btn-amber" id="btn-analyze-fakenews" disabled>
+                    <span class="btn-loader" id="fakenews-loader"></span>
+                    <span class="btn-label">Detect Fake News</span>
+                </button>
+                <button class="btn btn-ghost" id="btn-clear-fakenews">Clear</button>
+            </div>
+            
+            <!-- Sample Texts -->
+            <div class="sample-texts">
+                <p class="sample-label">Try a sample:</p>
+                <div class="sample-chips">
+                    <button class="sample-chip chip-real" data-text="The central bank maintained interest rates at their current level citing stable inflation and moderate economic growth. Analysts widely expected the decision based on recent economic indicators and labor market data.">✅ Real news</button>
+                    <button class="sample-chip chip-fake" data-text="SHOCKING: Secret underground alien base found beneath the White House! Government officials have been hiding extraterrestrial technology for decades according to leaked documents from an anonymous source.">❌ Fake news</button>
+                    <button class="sample-chip chip-real" data-text="Researchers at the university published findings showing that regular exercise can reduce the risk of heart disease by up to 30 percent. The study followed 10000 participants over a decade of observation.">📰 Health report</button>
+                    <button class="sample-chip chip-fake" data-text="URGENT: WiFi signals proven to cause immediate brain damage! Scientists warn everyone to disconnect immediately or risk permanent cognitive impairment within hours of exposure to wireless networks.">⚠️ Misinformation</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="result-panel hidden" id="fakenews-result-panel">
+            <div class="panel-header">
+                <h3>🔍 Detection Result</h3>
+                <button class="btn-close" id="btn-close-fakenews-result" aria-label="Close results">&times;</button>
+            </div>
+            
+            <div class="result-body">
+                <!-- Prediction Badge -->
+                <div class="sentiment-badge-container" id="fakenews-badge-container">
+                    <div class="sentiment-icon" id="fakenews-icon"></div>
+                    <div class="sentiment-label" id="fakenews-label"></div>
+                </div>
+
+                <!-- Credibility Meter -->
+                <div class="gauge-container" id="fakenews-gauge-container">
+                    <div class="gauge-label">Credibility Score</div>
+                    <div class="gauge-track">
+                        <div class="gauge-fill" id="fakenews-gauge-fill"></div>
+                    </div>
+                    <div class="gauge-value" id="fakenews-gauge-value">0%</div>
+                </div>
+
+                <!-- Probability Bars -->
+                <div class="prob-container" id="fakenews-prob-container">
+                    <h4>Classification Probabilities</h4>
+                    <div class="prob-bars" id="fakenews-prob-bars"></div>
+                </div>
+
+                <!-- Processed Text -->
+                <div class="processed-text-container">
+                    <h4>Processed Text (After NLP Pipeline)</h4>
+                    <div class="processed-text" id="fakenews-processed-text"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-logo">
+                        <span class="logo-icon">◈</span>
+                        <span class="logo-text">SentiGuard AI</span>
+                    </div>
+                    <p class="footer-desc">Powered by Machine Learning & Natural Language Processing. Built with Python, scikit-learn, and NLTK.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Analysis Tools</h4>
+                    <a href="/sentiment.html">Sentiment Analysis</a>
+                    <a href="/fakenews.html">Fake News Detection</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Technology</h4>
+                    <span>Naive Bayes</span>
+                    <span>SVM & Logistic Regression</span>
+                    <span>TF-IDF Vectorization</span>
+                    <span>NLTK Pipeline</span>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 SentiGuard AI — Sentiment Analysis & Fake News Detection Project</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/app.js"></script>
+    
+</body>
+</html>
